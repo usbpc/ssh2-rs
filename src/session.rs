@@ -7,7 +7,7 @@ use std::ffi::CString;
 use std::mem;
 use std::net::TcpStream;
 use std::path::Path;
-use std::rc::Rc;
+use std::sync::Arc;
 use std::slice;
 use std::str;
 
@@ -76,7 +76,7 @@ unsafe impl Send for SessionInner {}
 /// session. Sessions are created and then have the TCP socket handed to them
 /// (via the `set_tcp_stream` method).
 pub struct Session {
-    inner: Rc<SessionInner>,
+    inner: Arc<SessionInner>,
 }
 
 /// Metadata returned about a remote file when received via `scp`.
@@ -100,7 +100,7 @@ impl Session {
                 Err(Error::unknown())
             } else {
                 Ok(Session {
-                    inner: Rc::new(SessionInner {
+                    inner: Arc::new(SessionInner {
                         raw: ret,
                         tcp: RefCell::new(None),
                     }),
